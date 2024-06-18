@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# from parameter import lambda_rate, t, Pd
 
 #===============================#
 # Possion statistics simulation #
