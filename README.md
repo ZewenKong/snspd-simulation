@@ -19,3 +19,7 @@
 
 [2] If cannot generate the .net file, use the default LTspice path
     (C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe)
+
+## Hints
+
+- Check the LTspice and the PWL file path
