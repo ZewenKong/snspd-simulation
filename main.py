@@ -25,15 +25,7 @@ simulation.simulation(t, voltage_value)
 netlist = SpiceEditor('snspd.net')
 netlist.set_component_value('V1', str(voltage_value))
 
-"""
-netlist.add_instructions(
-        ".tran 0 500n 0 1p uic"
-)
-"""
-
-print(t)
 t_ns = int(t * 1e9)
-print(t_ns)
 tran_instruction = ".tran 0 {}n 0 1p uic".format(t_ns)
 netlist.add_instructions(tran_instruction)
 
