@@ -1,0 +1,32 @@
+Circuit: * D:\GitHub\SNSPDs-Probabilistic-Computing\snspd.asc
+
+I1: Removing PWL point (1.00001e-011,0)
+I1: Removing PWL point (1.67602e-008,0)
+I1: Removing PWL point (1.00391e-007,0)
+I1: Removing PWL point (1.50562e-007,0)
+I1: Removing PWL point (3.77054e-007,0)
+I1: Removing PWL point (4.85705e-007,0)
+I1: Removing PWL point (5.40535e-007,0)
+I1: Removing PWL point (6.12656e-007,0)
+I1: Removing PWL point (7.56568e-007,0)
+I1: Removing PWL point (8.41188e-007,0)
+I1: Removing PWL point (9.726e-007,0)
+Per .tran options, skipping operating point for transient analysis.
+
+Date: Fri Jun 21 14:25:52 2024
+Total elapsed time: 7.089 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 2000779
+traniter = 2000779
+tranpoints = 1000173
+accept = 1000173
+rejected = 0
+matrix size = 11
+fillins = 2
+solver = Normal
+Matrix Compiler1:      25 opcodes  0.1/[0.0]/0.1
+Matrix Compiler2: off  [0.1]/0.1/0.1
+

@@ -1,0 +1,15 @@
+* D:\GitHub\SNSPDs-Probabilistic-Computing\snspd.asc
+XU1 N002 0 v_output 0 nanowireBCF Lind=130n
+R2 v_output 0 50
+I1 0 N002 PWL file=D:\GitHub\SNSPDs-Probabilistic-Computing\outputPy\snspd_data.txt
+V1 N001 0 2 Rser=0
+R1 v_output N001 100k
+.tran 0 500n 0 1p uic
+* SNSPD BCF
+* Add a resistor (50 ohm) to\nmeasure the output voltage
+* An current is applied to the SNSPD
+* Under low-light conditions, the SNSPD is modeled as a Poisson Process.
+* In practice, the voltage should be between 0.3 and 0.4.\nHere, we will use 1 and 2 instead of these two values.
+.lib snspd.lib
+.backanno
+.end
