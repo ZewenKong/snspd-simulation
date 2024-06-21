@@ -1,4 +1,4 @@
-# SNSPDs-Probabilistic-Computing
+# SNSPDs-Simulation
 
 ## References
 
