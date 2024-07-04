@@ -32,16 +32,17 @@ LINE Normal -27 -3 -24 0
 LINE Normal -27 3 -24 0
 TEXT 24 0 Left 2 S
 SYMATTR Prefix X
-SYMATTR SpiceModel nanowireDynamic
+SYMATTR SpiceModel nanowireBCF
 SYMATTR Description snspd with gate
 SYMATTR ModelFile snspd.lib
-PIN 0 -48 NONE 8
-PINATTR SpiceOrder 3
-PIN 0 48 NONE 8
-PINATTR SpiceOrder 4
+SYMATTR Value Lind=100n
 PIN -64 -48 NONE 8
 PINATTR PinName gate-in
 PINATTR SpiceOrder 1
 PIN -64 48 NONE 8
 PINATTR PinName photon-out
 PINATTR SpiceOrder 2
+PIN 0 -48 NONE 8
+PINATTR SpiceOrder 3
+PIN 0 48 NONE 8
+PINATTR SpiceOrder 4

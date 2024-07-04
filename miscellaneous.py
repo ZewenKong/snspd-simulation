@@ -129,3 +129,55 @@ with open("snspd_data.txt", "w") as file:
     for time, volt in zip(steps, volt_signal):
         file.write(f"{time:.12e} {volt:.12e}\n")
 """
+
+
+#==============================#
+# Poisson Distribution Compare #
+#==============================#
+
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Method 1: Using exponential inter-arrival times
+lambda_rate = 0.001 * (10e9)  # Rate in Hz
+t = 500e-9  # Total time in seconds
+
+# Generate inter-arrival times
+mean_interarrival_time = 1 / lambda_rate
+total_time_elapsed = 0
+arrival_times_exp = []
+
+while total_time_elapsed < t:
+    interarrival_time = np.random.exponential(scale=mean_interarrival_time)
+    total_time_elapsed += interarrival_time
+    if total_time_elapsed < t:
+        arrival_times_exp.append(total_time_elapsed)
+
+arrival_times_exp_ns = np.array(arrival_times_exp) * 1e9  # Convert to nanoseconds
+
+# Method 2: Using uniformly distributed arrival times
+expected_no_photon = np.random.poisson(lambda_rate * t)
+photon_arrt_unif = np.sort(np.random.uniform(0, t, expected_no_photon)) * 1e9  # Convert to nanoseconds
+
+# Plotting
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.scatter(arrival_times_exp_ns, np.zeros_like(arrival_times_exp_ns), alpha=0.6, label='Exponential', color='blue')
+plt.title("Photon Arrivals with Exponential Distribution")
+plt.xlabel("Time (ns)")
+plt.yticks([])
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.scatter(photon_arrt_unif, np.zeros_like(photon_arrt_unif), alpha=0.6, label='Uniform', color='red')
+plt.title("Photon Arrivals with Uniform Distribution")
+plt.xlabel("Time (ns)")
+plt.yticks([])
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+"""

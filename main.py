@@ -3,46 +3,56 @@ from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import AscEditor, LTspice
 
-# Files import
+import ltspice
+
 import setUp
 import simulation
+import ascEditor
+import os
 
-# LTspice simulator path (default)
+# Set the variables
+t = setUp.SetTime()
+v = setUp.SetBiasVoltage()
+L_k = setUp.SetInductance()
+R_l = setUp.SetLoadResistance()
+
+# Edit the .asc file (Set the kinetic inductance)
+# netlist.set_component_attribute('XU1', 'params', "Lind={L_k}")
+ascEditor.ascEditor(L_k)
+
+# LTspice simulator path
 simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 
 # Create a netlist of the circuit
 runner = SimRunner(output_folder='./output', simulator=LTspice)
 runner.create_netlist('snspd.asc')
-
-# Set the voltage and time
-t = setUp.setTime()
-voltage_value = setUp.setVoltage()
-
-# Simulation the pulse voltage on the generated time point (Possion Distribution)
-simulation.simulation(t, voltage_value)
-
-# Edit the netlist
 netlist = SpiceEditor('snspd.net')
-netlist.set_component_value('V1', str(voltage_value))
 
+# Simulation process
+simulation.simulation(t, v, L_k, R_l)
+
+# Set the bias voltage and the load resistance
+netlist.set_component_value('V1', str(v))
+netlist.set_component_value('R2', str(R_l))
+
+# Set the simulation time (transfer in ns)
 t_ns = int(t * 1e9)
 tran_instruction = ".tran 0 {}n 0 1p uic".format(t_ns)
 netlist.add_instructions(tran_instruction)
 
 raw, log = runner.run_now(netlist)
+
+op_raw_file= "./output/snspd_1.op.raw"
+
 print('Successful/Total Simulations: ' + str(runner.okSim) + '/' + str(runner.runno))
-
 raw_file = "./output/snspd_1.raw"
+
 LTR = RawRead(raw_file)
+x = LTR.get_trace('time')
+y = LTR.get_trace("V(v_output)")
 
-# print(LTR.get_trace_names())
-# print(LTR.get_raw_property())
-
-v = LTR.get_trace("V(v_output)")
-x = LTR.get_trace('time')  # Gets the time axis
 steps = LTR.get_steps()
-
 for step in range(len(steps)):
-    plt.plot(x.get_wave(step), v.get_wave(step), label=steps[step])
+    plt.plot(x.get_wave(step), y.get_wave(step), label=steps[step])
 
 plt.show()

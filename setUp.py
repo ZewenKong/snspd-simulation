@@ -1,16 +1,33 @@
-def setTime():
-    time = int(input("Simulation time: "))
+
+#==================#
+# Variables Set Up #
+#==================#
+
+# Set the simulation time
+def SetTime():
+    time = float(input("Simulation time: "))
     t = time*1e-9
     return t
 
-def setVoltage():
+# Set the bias voltage source
+def SetBiasVoltage():
     try:
-        volt_value = float(input("Voltage value: "))
-        if 1 <= volt_value <= 2:
-            return volt_value
+        v = float(input("Voltage value (1 ~ 2 V): "))
+        if 1 <= v <= 2:
+            return v
         else:
             print("Value out of range.")
-            return setVoltage()
+            return SetBiasVoltage()
     except ValueError:
         print("Invalid input.")
-        return setVoltage()
+        return SetBiasVoltage()
+
+# Set the kinetic inductance
+def SetInductance():
+    L_k = str(input("Inductance value: "))
+    return L_k
+
+# Set the load resistance
+def SetLoadResistance():
+    R_l = str(input("Load R value: "))
+    return R_l
