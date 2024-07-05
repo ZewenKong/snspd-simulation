@@ -7,8 +7,6 @@
 * superconducting nanowire's physical
 * response to a photon.
 *
-* The nanowireBCF ==> I-V response
-*
 * The nanowireBCF (Basic Curve Fit)
 * model uses a group of switches
 * parallel to a variable resitor
@@ -32,12 +30,6 @@
 * drain: one terminal of channel    *
 * source: other terminal of channel *
 *************************************
-
-* subckt - define the circuit
-* Isw - switching current
-* Jc - current density
-* width - nanowire width
-* thickness - nanowire thickness
 
 .subckt nanowireBCF gate gatereturn drain source
 +Lind=100n Isw={Jc*width*thickness*C}

@@ -6,11 +6,13 @@ from PyLTSpice import AscEditor, LTspice
 import set_up
 import simulation
 import inductance_editor
-import os
 
-# Set the variables
-t = set_up.SetTime()
-v = set_up.SetBiasVoltage()
+"""
+* Before run, please check the LTspice PWL file path
+"""
+
+t = 100 # 100 ns (pre-defined)
+v = 2   # 2 V (pre-defined)
 L_k = set_up.SetInductance()
 R_l = set_up.SetLoadResistance()
 """
@@ -20,7 +22,7 @@ $ netlist.set_component_attribute('XU1', 'params', "Lind={L_k}")
 * edit the asc file directly to instead
 * should be executed before simulation
 """
-inductance_editor.ascEditor(L_k)
+inductance_editor.EditInductance(L_k)
 
 # LTspice simulator (default) path (recommend to be default)
 simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
@@ -29,18 +31,11 @@ simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 runner = SimRunner(output_folder='./output', simulator=LTspice)
 runner.create_netlist('./spiceModel/snspd.asc')
 netlist = SpiceEditor('./spiceModel/snspd.net')
+# Generate detection time points
+simulation.Simulation(t, v, L_k, R_l)
 
-# Simulate
-simulation.simulation(t, v, L_k, R_l)
-
-# Set the bias voltage and the load resistance
-netlist.set_component_value('V1', str(v))
+# Set the load resistance (R2 in electrical model) (Ohm)
 netlist.set_component_value('R2', str(R_l))
-
-# Set the simulation time (transfer in ns)
-t_ns = int(t * 1e9)
-tran_instruction = ".tran 0 {}n 0 1p uic".format(t_ns)
-netlist.add_instructions(tran_instruction)
 
 raw, log = runner.run_now(netlist)
 print('Successful/Total Simulations: ' + str(runner.okSim) + '/' + str(runner.runno))

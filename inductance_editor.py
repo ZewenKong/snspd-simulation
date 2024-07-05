@@ -1,3 +1,5 @@
+import os
+
 def EditInductance(L_k):
     # Get current path
     current_path = os.getcwd()
