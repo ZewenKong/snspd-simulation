@@ -4,10 +4,6 @@ import os
 
 def Simulation (t, v, L_k, R_l):
 
-    #==================#
-    # Pulse simulation #
-    #==================#
-
     init_delay = 10e-9
     tau_fall = (float(L_k)*10e-9)/(float(R_l) + 100e3)
     tau_rise = (float(L_k)*10e-9)/(float(R_l))
@@ -23,3 +19,5 @@ def Simulation (t, v, L_k, R_l):
     os.makedirs("outputPy", exist_ok=True)
     with open("outputPy/snspd_data.txt", "w") as file:
         for t, v in pdp: file.write(f"{t} {v}\n")
+
+    return tau_fall, tau_rise, tau_dead

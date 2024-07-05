@@ -31,11 +31,17 @@ simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 runner = SimRunner(output_folder='./output', simulator=LTspice)
 runner.create_netlist('./spiceModel/snspd.asc')
 netlist = SpiceEditor('./spiceModel/snspd.net')
+
 # Generate detection time points
 simulation.Simulation(t, v, L_k, R_l)
+tau_fall, tau_rise, tau_dead = simulation.Simulation(t, v, L_k, R_l)
 
 # Set the load resistance (R2 in electrical model) (Ohm)
 netlist.set_component_value('R2', str(R_l))
+
+# Set the pulse properties
+element_model = "PULSE(0 1u 10n {tf}n {tr}n 10p 30n 3)".format(tf=tau_fall, tr=tau_rise)
+netlist.set_element_model('I1', element_model)
 
 raw, log = runner.run_now(netlist)
 print('Successful/Total Simulations: ' + str(runner.okSim) + '/' + str(runner.runno))
@@ -49,4 +55,5 @@ steps = LTR.get_steps()
 for step in range(len(steps)):
     plt.plot(x.get_wave(step), y.get_wave(step), label=steps[step])
 
+plt.yticks([])
 plt.show()

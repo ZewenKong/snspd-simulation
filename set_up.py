@@ -1,8 +1,3 @@
-
-#==================#
-# Variables Set Up #
-#==================#
-
 # Set the simulation time
 def SetTime():
     time = float(input("Simulation time: "))

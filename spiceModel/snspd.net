@@ -1,10 +1,10 @@
 * D:\GitHub\SNSPDs-Simulation\spiceModel\snspd.asc
 XU1 N002 0 v_output 0 nanowireBCF Lind=100n
 R2 v_output 0 50
-I1 0 N002 PWL file=D:\GitHub\SNSPDs-Simulation\outputPy\snspd_data.txt
+I1 0 N002 PULSE()
 V1 N001 0 2 Rser=0
 R1 v_output N001 100k
-.tran 0 100n 0 1p uic
+.tran 0 100n 0 1p
 * SNSPD BCF
 .lib snspd.lib
 .backanno
