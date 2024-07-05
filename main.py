@@ -3,32 +3,34 @@ from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import AscEditor, LTspice
 
-import ltspice
-
-import setUp
+import set_up
 import simulation
-import ascEditor
+import inductance_editor
 import os
 
 # Set the variables
-t = setUp.SetTime()
-v = setUp.SetBiasVoltage()
-L_k = setUp.SetInductance()
-R_l = setUp.SetLoadResistance()
+t = set_up.SetTime()
+v = set_up.SetBiasVoltage()
+L_k = set_up.SetInductance()
+R_l = set_up.SetLoadResistance()
+"""
+$ netlist.set_component_attribute('XU1', 'params', "Lind={L_k}")
 
-# Edit the .asc file (Set the kinetic inductance)
-# netlist.set_component_attribute('XU1', 'params', "Lind={L_k}")
-ascEditor.ascEditor(L_k)
+* the "set_component_attribute()" function in PyLTspice is not worked
+* edit the asc file directly to instead
+* should be executed before simulation
+"""
+inductance_editor.ascEditor(L_k)
 
-# LTspice simulator path
+# LTspice simulator (default) path (recommend to be default)
 simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 
 # Create a netlist of the circuit
 runner = SimRunner(output_folder='./output', simulator=LTspice)
-runner.create_netlist('snspd.asc')
-netlist = SpiceEditor('snspd.net')
+runner.create_netlist('./spiceModel/snspd.asc')
+netlist = SpiceEditor('./spiceModel/snspd.net')
 
-# Simulation process
+# Simulate
 simulation.simulation(t, v, L_k, R_l)
 
 # Set the bias voltage and the load resistance
@@ -41,9 +43,6 @@ tran_instruction = ".tran 0 {}n 0 1p uic".format(t_ns)
 netlist.add_instructions(tran_instruction)
 
 raw, log = runner.run_now(netlist)
-
-op_raw_file= "./output/snspd_1.op.raw"
-
 print('Successful/Total Simulations: ' + str(runner.okSim) + '/' + str(runner.runno))
 raw_file = "./output/snspd_1.raw"
 

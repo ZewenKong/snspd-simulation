@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-import poissonProcess
+import poisson_process
 
 def simulation (t, v, L_k, R_l):
 
@@ -29,7 +29,7 @@ def simulation (t, v, L_k, R_l):
 
     # Photons will arrive following a Poisson distribution
     # return a list of detection time points
-    arr_t = poissonProcess.PoissonProcess(t, lambda_rate = 0.001*(10e9))
+    arr_t = poisson_process.PoissonProcess(t, lambda_rate = 0.001*(10e9))
 
     #=============================#
     # Detection events simulation #
@@ -73,24 +73,18 @@ def simulation (t, v, L_k, R_l):
             if atp - ldtp > tau_dead:
                 detection_t.append(atp)
                 ldtp = atp
-
-    print("------------------------------")
+ 
     print("Detection Probability: ",P_d*100,"%")
-    print("------------------------------")
     print("Photon generates:\n", ["{:.5e}".format(i) for i in arr_t])
-    print("------------------------------")
     print("Detected Time Points [array]:\n", ["{:.5e}".format(i) for i in detection_t])
 
     pwl_data = []
-
-    pulse = (v/100e3)*float(R_l)
-    rise_t = 10e-12
     on_t = 10e-12
 
     for dt in detection_t:
         pwl_data.append((dt, 0))
-        pwl_data.append((dt + rise_t, pulse))
-        pwl_data.append((dt + rise_t + on_t, 0))
+        pwl_data.append((dt + tau_fall, 1))
+        pwl_data.append((dt + tau_fall + on_t, 0))
 
     #===================#
     # TXT File Generate #

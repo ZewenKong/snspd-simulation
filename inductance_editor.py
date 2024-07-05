@@ -1,5 +1,8 @@
-def ascEditor(L_k):
-    file_path = r"C:\Users\zewen\Downloads\SNSPDsSim\snspd.asc"
+def EditInductance(L_k):
+    # Get current path
+    current_path = os.getcwd()
+    # Get the .asc file path
+    file_path = os.path.join(current_path, 'spiceModel', 'snspd.asc')
 
     with open(file_path, 'r') as file:
         lines = file.readlines()
