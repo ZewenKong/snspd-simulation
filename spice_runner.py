@@ -1,10 +1,12 @@
+from matplotlib import pyplot as plt
 from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import LTspice
 
+import set_up
 import spice_editor
 
-def SpiceRunner (L_k, R_l, asc_path, net_path, output_path):
+def SpiceRunner(L_k, R_l, asc_path, net_path, output_path):
 
     """
     $ netlist.set_component_attribute('XU1', 'params', "Lind={L_k}")
@@ -14,22 +16,25 @@ def SpiceRunner (L_k, R_l, asc_path, net_path, output_path):
     * should be executed before simulation
 
     """
-
-    inductance_editor.EditInductance(L_k)
+    spice_editor.EditInductance(L_k)
 
     # LTspice simulator (default) path (recommend to be default)
     simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 
+    # Create a netlist of the circuit
     runner = SimRunner(output_folder=output_path, simulator=LTspice)
     runner.create_netlist(asc_path)
     netlist = SpiceEditor(net_path)
 
-    # Set the load resistance (R2 in electrical model) (Ohm)
+    """
+    * Set the load resistance (Ohm)
+    * Load resistance (R_l), input (Ohm), processing (Ohm)
+
+    """
     netlist.set_component_value('R2', str(R_l))
 
     """
     * Inductance (L_k), input (H), processing (nH)
-    * Load resistance (R_l), input (Ohm), processing (Ohm)
 
     PULSE(
         initial_voltage = 0
@@ -67,10 +72,9 @@ def SpiceRunner (L_k, R_l, asc_path, net_path, output_path):
         to=tau_fall_in_ns + t_on,
         p=period_in_ns
         )
-       
     netlist.set_element_model('I1', element_model)
 
-    # Set the despective (simulation time)
+    # Set the simulation time
     directive = ".tran 0 {}n 0 1p".format(simulation_time_in_ns)
     netlist.add_instructions(directive)
 
@@ -81,8 +85,6 @@ def SpiceRunner (L_k, R_l, asc_path, net_path, output_path):
     LTR = RawRead(raw_file)
     x = LTR.get_trace('time')
     y = LTR.get_trace("V(v_output)")
-
     steps = LTR.get_steps()
 
     return x, y, steps
-
