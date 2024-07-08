@@ -1,20 +1,29 @@
 from matplotlib import pyplot as plt
 import pandas as pd
+import tkinter as tk
+
+from csv_plot import CSVPlot
+
 import set_up
-import spice_runner
+import spice_run
+import examine
 import examine_inductance
 import examine_resistance
 
-#=========================#
-# Define the Working Path #
-#=========================#
+def main():
+    asc_path = './spiceModel/snspd.asc'
+    net_path = './spiceModel/snspd.net'
+    output_path = './output'
+    csv_output_path = './outputCSV'
 
-asc_path = './spiceModel/snspd.asc'
-net_path = './spiceModel/snspd.net'
-output_path = './output'
+    plt.figure()
+    # examine_inductance.ExamineInductance(asc_path, net_path, output_path, csv_output_path)
+    # examine_resistance.ExamineResistance(asc_path, net_path, output_path, csv_output_path)
+    # examine.Examine(asc_path, net_path, output_path, csv_output_path)
 
-plt.figure()
+    root = tk.Tk()
+    app = CSVPlot(root)
+    root.mainloop()
 
-# examine_inductance.ExamineInductance(asc_path, net_path, output_path)
-examine_resistance.ExamineResistance(asc_path, net_path, output_path)
-
+if __name__ == "__main__":
+    main()

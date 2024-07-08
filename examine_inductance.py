@@ -1,12 +1,12 @@
 from matplotlib import pyplot as plt
 import pandas as pd
-import spice_runner
+import spice_run
 
-def ExamineInductance(asc_path, net_path, output_path):
+def ExamineInductance(asc_path, net_path, output_path, csv_output_path):
 
     # Define the Inductance Range
     Lk_start = 0  # Lk_start = set_up.SetStartInductance()
-    Lk_end = 1000  # Lk_end = set_up.SetEndInductance()
+    Lk_end = 500  # Lk_end = set_up.SetEndInductance()
     Lk_step = 50  # Lk_step = set_up.SetInductanceStep()
 
     # Fix the Load Resistance Value
@@ -15,7 +15,7 @@ def ExamineInductance(asc_path, net_path, output_path):
     data = []
 
     for Lk in range(Lk_start, Lk_end + Lk_step, Lk_step):
-        x, y, s = spice_runner.SpiceRunner(Lk, Rl, asc_path, net_path, output_path)
+        x, y, s = spice_run.SpiceRunner(Lk, Rl, asc_path, net_path, output_path)
         
         for j in range(len(s)):
             x_wave = x.get_wave(j)
@@ -30,7 +30,7 @@ def ExamineInductance(asc_path, net_path, output_path):
     df = pd.DataFrame(data)
 
     # Save the DataFrame to a CSV file
-    df.to_csv(f'{output_path}/simulation_data.csv', index=False)
+    df.to_csv(f'{csv_output_path}/simulation_data.csv', index=False)
 
     plt.get_current_fig_manager().toolbar.zoom()
     plt.show()

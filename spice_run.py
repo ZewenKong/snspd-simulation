@@ -3,7 +3,7 @@ from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import LTspice
 
-import spice_editor
+import spice_edit
 
 def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
 
@@ -15,7 +15,7 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     * should be executed before simulation
 
     """
-    spice_editor.EditInductance(Lk)
+    spice_edit.EditInductance(Lk)
 
     """
     * Define the LTspice simulator path (recommend to be default)
