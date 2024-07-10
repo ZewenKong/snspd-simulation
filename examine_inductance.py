@@ -4,13 +4,12 @@ import spice_run
 
 def ExamineInductance(asc_path, net_path, output_path, csv_output_path):
 
-    # Define the Inductance Range
     Lk_start = 0  # Lk_start = set_up.SetStartInductance()
     Lk_end = 500  # Lk_end = set_up.SetEndInductance()
     Lk_step = 50  # Lk_step = set_up.SetInductanceStep()
 
-    # Fix the Load Resistance Value
-    Rl = 50
+    
+    Rl = 50  # Fix the Load Resistance Value
 
     data = []
 

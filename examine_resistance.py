@@ -1,23 +1,15 @@
 
 from matplotlib import pyplot as plt
 import pandas as pd
-import numpy as np
-import set_up
-import spice_run
-
-from matplotlib import pyplot as plt
-import pandas as pd
 import spice_run
 
 def ExamineResistance(asc_path, net_path, output_path, csv_output_path):
 
-    # Define the Load Resistance Value
-    Rl_start = 1
-    Rl_end = 51
-    Rl_step = 5
+    Rl_start = 1  # Define the Load Resistance Value
+    Rl_end = 201
+    Rl_step = 50
 
-    # Fix the Inductance Range
-    Lk = 100
+    Lk = 100  # Fix the Inductance Range
 
     data = []
 

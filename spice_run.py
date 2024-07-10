@@ -1,4 +1,3 @@
-from matplotlib import pyplot as plt
 from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import LTspice
@@ -17,10 +16,7 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     """
     spice_edit.EditInductance(Lk)
 
-    """
-    * Define the LTspice simulator path (recommend to be default)
-
-    """
+    # Define the LTspice simulator path (recommend to be default)
     simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
 
     # Create a netlist of the circuit
@@ -31,22 +27,6 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     #=================#
     # Time parameters #
     #=================#
-
-    """
-    * Inductance (Lk), input (H), processing (nH)
-
-    PULSE(
-        initial_voltage = 0
-        peak_voltage = 1 uV
-        initial delay = 10 ns
-        time_rise = {tf} ns
-        time_fall = {tr} ns
-        time_on = 10 ps
-        period = 30 ns
-        number_of_pulse = 1
-        )
-
-    """
 
     init_delay = 10**(-9)  # unit: second
     tau_fall = (float(Lk)*(10**(-9))/(float(Rl) + (100*(10**3))))  # unit: second
@@ -71,9 +51,14 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
 
     # Set the bias current resource (pulse shape)
     element_model = "PULSE(0 1u 10n {t1}n {t2}n 0 {p}n 1)".format(
-        t1=tau_fall_in_ns, 
-        t2=tau_fall_in_ns + t_on,
-        p=period_in_ns
+        # initial voltage = 0
+        # peak voltage = 1 uV
+        # initial delay = 10 ns
+        t1=tau_fall_in_ns,  # time taken for rising
+        t2=tau_fall_in_ns + t_on,  # time taken for falling
+        # time on
+        p=period_in_ns  # pulse period
+        # number of pulse
         )
     netlist.set_element_model('I1', element_model)
 
@@ -94,6 +79,6 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     LTR = RawRead(raw_file)
     x = LTR.get_trace('time')
     y = LTR.get_trace("V(v_output)")
-    s = LTR.get_steps()  # step
+    s = LTR.get_steps()
 
     return x, y, s
