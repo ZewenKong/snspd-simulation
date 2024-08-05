@@ -1,1 +1,1 @@
-# snspd-communication
+# snspd-simulation
