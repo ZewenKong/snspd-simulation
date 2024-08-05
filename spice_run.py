@@ -1,10 +1,9 @@
 from PyLTSpice import SpiceEditor, SimRunner
 from PyLTSpice import RawRead
 from PyLTSpice import LTspice
+import pulse_simulation
 
-import spice_edit
-
-def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
+def SpiceRun(t, L_k, R_l, v, asc_path, net_path, output_path):
 
     """
     $ netlist.set_component_attribute('XU1', 'params', "Lind={Lk}")
@@ -12,9 +11,13 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     * the "set_component_attribute()" function in PyLTspice is not worked
     * edit the asc file directly to instead
     * should be executed before simulation
+    
+    # spice_edit.EditInductance(L_k)
 
     """
-    spice_edit.EditInductance(Lk)
+ 
+    # Simulate the photon arrival events in poisson distribution
+    pulse_simulation.PulseSimulation(t, L_k, R_l, v)
 
     # Define the LTspice simulator path (recommend to be default)
     simulator = r"C:\Program Files\LTC\LTspiceXVII\XVIIx64.exe"
@@ -24,61 +27,55 @@ def SpiceRunner(Lk, Rl, asc_path, net_path, output_path):
     runner.create_netlist(asc_path)
     netlist = SpiceEditor(net_path)
 
-    #=================#
-    # Time parameters #
-    #=================#
+    """
+    # Set the load resistance
+    # netlist.set_component_value('R2', str(R_l))
 
-    init_delay = 10**(-9)  # unit: second
-    tau_fall = (float(Lk)*(10**(-9))/(float(Rl) + (100*(10**3))))  # unit: second
-    tau_rise = (float(Lk)*(10**(-9))/(float(Rl)))  # unit: second
-    t_on = 10**(-12)  # unit: second
+    # Set the simulation time (transfer in ns)
+    # t_ns = int(t * 1e9)
+    # tran_instruction = ".tran 0 {}n 0 1p uic".format(t_ns)
+    # netlist.add_instructions(tran_instruction)
 
-    period = tau_fall + tau_rise + t_on  # unit: second
-    simulation_time = float(((period + init_delay))*10)  # unit: second
+    """
+    
+    if v <=1.0:
+        voltage = 1.0001
+    if v > 2.0:
+        voltage = 2.0
+    else:
+        voltage = v
 
-    # Time (in nanosecond)
-    tau_fall_in_ns = tau_fall*(10**9)
-    tau_rise_in_ns = tau_rise*(10**9)
-    period_in_ns = period*(10**9)
-    simulation_time_in_ns = simulation_time*(10**9)
+    netlist.set_component_value('V1', f'SINE(0 {voltage} 50MEG 0 0 0)')   # superconducting
+    netlist.set_component_value('V2', f'SINE(0 {voltage} 50MEG 0 0 0)')   # normal
+    netlist.set_component_value('V3', str(voltage))                       # snspd
 
-    #================#
-    # Set parameters #
-    #================#
-
-    # Se the load resistance
-    netlist.set_component_value('R2', str(Rl))
-
-    # Set the bias current resource (pulse shape)
-    element_model = "PULSE(0 1u 10n {t1}n {t2}n 0 {p}n 1)".format(
-        # initial voltage = 0
-        # peak voltage = 1 uV
-        # initial delay = 10 ns
-        t1=tau_fall_in_ns,  # time taken for rising
-        t2=tau_fall_in_ns + t_on,  # time taken for falling
-        # time on
-        p=period_in_ns  # pulse period
-        # number of pulse
-        )
-    netlist.set_element_model('I1', element_model)
-
-    # Set the simulation time
-    directive = ".tran 0 {}n 0 1p".format(simulation_time_in_ns)
-    netlist.add_instructions(directive)
-
-    #==============#
-    # Run and Read #
-    #==============#
+    # hotspot resistance (the Ihs is fixed at 5 uA)
+    Rhs = (((voltage/1e5)-5e-6)/5e-6)*50
+    netlist.set_component_value('Rn', str(Rhs))
+    
+    # set variable parameters
+    critical_current = ((voltage/1e5)-5e-6)*1.09    # sine wave critical current Ic
+    threshold_voltage = ((voltage/1e5)-5e-6)*50     # threshold voltage of VCVS (comparator)
+    netlist.set_parameters(Ic=critical_current, pvt=threshold_voltage, 
+                           nvt=(-threshold_voltage), vi=voltage)
 
     # Run the netlist file
     raw, log = runner.run_now(netlist)
     print('Successful/Total Simulations: ' + str(runner.okSim) + '/' + str(runner.runno))
-    
+ 
     # Read the raw file
     raw_file = "./output/snspd_1.raw"
     LTR = RawRead(raw_file)
     x = LTR.get_trace('time')
-    y = LTR.get_trace("V(v_output)")
+
+    y_sc = LTR.get_trace("V(superconducting)")   # superconducting voltage
+    y_n = LTR.get_trace("V(normal)")             # normal state voltage
+    y_mn = LTR.get_trace("V(modified-normal)")   # modified normal state voltage
+    y_rp = LTR.get_trace("V(result-pulse)")      # voltage pulse (leaving superconducting)
+
+    y_p = LTR.get_trace("V(photon)")             # snspd photon detection pulse
+    y_sp = LTR.get_trace("V(square-pulse)")      # square pulse to change the voltage level
+    v = LTR.get_trace("V(voltage-level)")       # voltage level (moire transistor)
     s = LTR.get_steps()
 
-    return x, y, s
+    return x, y_sc, y_n, y_mn, y_rp, y_p, y_sp, v, s

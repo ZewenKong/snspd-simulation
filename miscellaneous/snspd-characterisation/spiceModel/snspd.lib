@@ -79,7 +79,6 @@
 ** MAIN CIRCUIT **
 
 * channel Inductor
-* LXXXXXXX N+ N- VALUE
 L1 drain N1 Flux=({Lind}/(2.0*cos(0.67*asin(0.6*x/{Isw}))-1))*x Rser = 1e-10
 
 * photodetection-event current sensor

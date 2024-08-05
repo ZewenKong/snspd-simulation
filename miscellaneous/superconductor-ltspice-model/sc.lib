@@ -1,0 +1,24 @@
+*** Superconductor Library ***
+
+* Untilised to examine the electrical (I, V, t) relationship
+* with an A.C. source
+
+.subckt superconductor gate gatereturn n1 n2
++Ic=10u
++Rsc=1f
++Rn=1500
++Rct=10u
+
+* Parameters
+*.PARAM Ic = 10u
+    * Critical current (A)
+*.PARAM Rsc = 1f
+    * Superconducting resistance (Ohm)
+*.PARAM Rn = 1500
+    * Normal state resistance (Ohm)
+
+* superconducting property
+R1 gate gatereturn 1f
+B1 n1 n2 V=IF((abs(I(R1))<Ic), I(R1)*(Rsc+Rct), I(R1)*(Rn+Rct))
+
+.ends superconductor
